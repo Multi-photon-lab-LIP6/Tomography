@@ -123,11 +123,16 @@ class XPCounts:
             ### The ordering of the channel_eff_2_emissinos matches with the covention: {123}, {124}, {134}, {234} (this changes depending on how we save data)
             ### If we change this order we need to do the same in set_raw_counts in efficiencies.py
             ### Correcting with the channel_eff
-            self.counts_array[w] /= channel_eff.astype(float)
+            # self.counts_array[w] /= channel_eff.astype(float)
+            # if double_emission_eff is not None:
+            #     self.counts_array_2_emissions[w] /= double_emission_eff.astype(float)
+            # if four_emission_eff is not None:
+            #     self.counts_array_4_emissions[w] /= four_emission_eff.astype(float)
+            self.counts_array[w] = self.counts_array[w]/channel_eff.astype(float)
             if double_emission_eff is not None:
-                self.counts_array_2_emissions[w] /= double_emission_eff.astype(float)
+                self.counts_array_2_emissions[w] = self.counts_array_2_emissions[w]/double_emission_eff.astype(float)
             if four_emission_eff is not None:
-                self.counts_array_4_emissions[w] /= four_emission_eff.astype(float)
+                self.counts_array_4_emissions[w] = self.counts_array_4_emissions[w]/four_emission_eff.astype(float)
             
             '''
             Applying the correction of the double emission with respect of the order of the pseudo code : {123}, {124}, {134}, {234}
