@@ -178,9 +178,8 @@ def ghz_tomo(file, working_dir, working_dir_data, correct_2emission, aq_time, ge
         bellmatrix=np.array(np.outer(bell, np.conjugate(bell)))
 
         states=state
-        # for index in range(len(states)):
-        #     print("Fidelity before correction:")
-        #     print(np.real(np.round(states[index].state.fidelity(bell),5)))
+        for index in range(len(states)):
+            print(np.real(np.round(states[index].state.fidelity(bell),5)))
         #     print("\n")
 
         ##########################################################
@@ -189,13 +188,13 @@ def ghz_tomo(file, working_dir, working_dir_data, correct_2emission, aq_time, ge
         fid=np.zeros((n_files))
         optimized_matrix=np.zeros((n_files,2**qubit_number,2**qubit_number), dtype='complex')
 
-        guess=np.zeros(3*(qubit_number))
+        guess=np.ones(3*(qubit_number))
         bounds=[(-np.pi,np.pi)]*3*(qubit_number)
         results = []
 
         opt=Optimizer(guess, function_fidelity_U4, results=FidelityResults)
         for index in range(len(states)):
-            result=opt.optimize(qubit_number,states[index].state, bell, bounds=bounds)
+            result=opt.optimize(qubit_number,states[index].state, bellmatrix, bounds=bounds)
             results.append(result)
 
         if get_u is True:
@@ -221,11 +220,11 @@ def ghz_tomo(file, working_dir, working_dir_data, correct_2emission, aq_time, ge
             U.append(results[index].u)
             target_ini.append(np.transpose(np.conjugate(U[-1]))@bellmatrix@U[-1]) 
 
-            # states[index].calculate_fidelity_error(players, error_runs, opt, target, optimization=True, bounds=bounds)
+            states[index].calculate_fidelity_error(players, error_runs, opt, target, optimization=True, bounds=bounds)
             
-            # print('file, fidelity, fidelity_mean, fidelity_std: ',
-            #       states_file[index], np.round(states[index].state.fidelity(target_ini[-1]),5), -np.round(states[index].fidelity_mu,5),
-            #       np.round(states[index].fidelity_std,6), '\n')
+            print('file, fidelity, fidelity_mean, fidelity_std: ',
+                  states_file[index], np.round(states[index].state.fidelity(target_ini[-1]),5), -np.round(states[index].fidelity_mu,5),
+                   np.round(states[index].fidelity_std,6), '\n')
 
         ##########################################################
         #--------------- PLOTTING DENSITY MATRIX-----------------#
@@ -242,10 +241,10 @@ def ghz_tomo(file, working_dir, working_dir_data, correct_2emission, aq_time, ge
         print(f"Fidelity with unitary optimization = {np.round(states[index].state.fidelity(target_ini[-1]),5)}%")
         
         if plot == True :
-            results[-1].optimized_state.plot_dm(cbar_real=True, cbar_im=False, save_pdf=None, save_svg=None)
+            state[-1].state.plot_dm(cbar_real=True, cbar_im=False, save_pdf=r'C:\Users\QILIP6\Desktop\Multipartite Entanglement Experiment\Data\QST\QST_GHZ_aqtime=150.0s_20250530130750', save_svg=None)
 
         if density == True :
-            print('Density Matrix :', state[-1].state.state)
+            print('Density Matrix :', repr(state[-1].state.state))
         
         if save == True :
             os.chdir(working_dir_data +'\\'+ filename)
