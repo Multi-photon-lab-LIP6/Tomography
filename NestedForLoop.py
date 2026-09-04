@@ -21,6 +21,6 @@ def get_iterator(K,n):
         r_in_base_K = np.base_repr(r, K)
         list_r_in_base_K = [0]*n
         for c in range(len(r_in_base_K)):
-            list_r_in_base_K[n - len(r_in_base_K) + c] = np.int(r_in_base_K[c])
+            list_r_in_base_K[n - len(r_in_base_K) + c] = int(r_in_base_K[c])
         iterator.append(np.array(list_r_in_base_K))
     return iterator

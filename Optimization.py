@@ -54,16 +54,23 @@ def function_fidelity_U4(x, qubit_number, dm, bell):
     return -np.abs(dm.apply_unitary(P).fidelity(bell))
 
 def function_fidelity_U2(x, qubit_number, dm, bell):
-    # This function should work both for the Bell state and the GHZ, IF we want to optimize on all players
-    U1=general_unitary(x[0:3])#np.diag([1,1])
+    U1=general_unitary(x[0:3])
     U2=general_unitary(x[3:6])
     P = np.kron(U1,U2)
-    # if qubit_number > 2:
-    #     U3=general_unitary(x[6:9])
-    #     P = np.kron(np.kron(U1,U2),U3) 
-    #     if qubit_number > 3:
-    #         U4=general_unitary(x[9:12])
-    #         P = np.kron(np.kron(np.kron(U1,U2),U3),U4)
+
+    return -np.abs(dm.apply_unitary(P).fidelity(bell))
+
+def function_fidelity_U1_diag(x, qubit_number, dm, bell):
+    U1=general_unitary(x[0:3])
+    U2=np.diag([1,1])
+    P = np.kron(U1,U2)
+
+    return -np.abs(dm.apply_unitary(P).fidelity(bell))
+
+def function_fidelity_U2_diag(x, qubit_number, dm, bell):
+    U1=np.diag([1,1])
+    U2=general_unitary(x[0:3])
+    P = np.kron(U1,U2)
 
     return -np.abs(dm.apply_unitary(P).fidelity(bell))
 
@@ -83,7 +90,7 @@ def function_fidelity_Rz(x, qubit_number, dm, bell):
 class FidelityResults(Results):
     @property
     def u1(self):
-        # return np.diag([1,1])
+        #return np.diag([1,1])
         return general_unitary(self.params[0:3])
     
     @property
@@ -92,7 +99,8 @@ class FidelityResults(Results):
     
     @property
     def u2(self):
-        # return general_unitary(self.params[0:3])
+        #return np.diag([1,1])
+        #return general_unitary(self.params[0:3])
         return general_unitary(self.params[3:6])
     
     @property
@@ -116,6 +124,27 @@ class FidelityResults(Results):
             if self.qubit_number > 3:
                 u=np.kron(u,self.u4)
         return u
+    
+    @property
+    def u1_id(self):
+        self.u2 = np.diag([1,1])
+        u=np.kron(self.u1,self.u2)
+        if self.qubit_number > 2:
+            u=np.kron(u,self.u3)
+            if self.qubit_number > 3:
+                u=np.kron(u,self.u4)
+        return u
+    
+    @property
+    def u2_id(self):
+        self.u1 = np.diag([1,1])
+        u=np.kron(self.u1,self.u2)
+        if self.qubit_number > 2:
+            u=np.kron(u,self.u3)
+            if self.qubit_number > 3:
+                u=np.kron(u,self.u4)
+        return u
+    
     
     @property
     def u_Rz(self):

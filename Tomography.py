@@ -17,6 +17,7 @@ import errors
 
 import heapq
 import os
+import glob
 from pathlib import Path
 from itertools import combinations
 import time
@@ -400,8 +401,6 @@ class LRETomography():
         """
         self.fidelity_2_experimental_dms_mu = np.mean(fidelity_sim)
         self.fidelity_2_experimental_dms_std = np.std(fidelity_sim)
-
-
 
 class GeneticTomography(LRETomography):
     """

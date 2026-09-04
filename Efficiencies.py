@@ -170,7 +170,7 @@ def set_raw_counts_double_emissions(datafiles, qubit_number, column_start, colum
     indice = []
     for i in range(column_stop-column_start):
         indice.append(i)
-    counts_aux=counts[[tuple(indice)]]
+    counts_aux=counts[indice]
     return(counts_aux)
 
     
